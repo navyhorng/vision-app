@@ -1,0 +1,51 @@
+# version: "3.8"
+
+services:
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: vision_app
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+    depends_on:
+      - mysql
+    networks:
+      - vision_network
+
+  nginx:
+    image: nginx:alpine
+    container_name: vision_nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - vision_network
+
+  mysql:
+    image: mysql:8.0
+    container_name: vision_mysql
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: vision_app
+      MYSQL_USER: vision_user
+      MYSQL_PASSWORD: vision_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - vision_network
+
+volumes:
+  mysql_data:
+
+networks:
+  vision_network:
