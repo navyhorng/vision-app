@@ -6,7 +6,7 @@ use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Product extends Model
+class ScanRequest extends Model
 {
     use CrudTrait;
     use HasFactory;
@@ -17,7 +17,7 @@ class Product extends Model
     |--------------------------------------------------------------------------
     */
 
-    protected $table = 'products';
+    protected $table = 'scan_requests';
     // protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];
@@ -25,10 +25,8 @@ class Product extends Model
     // protected $hidden = [];
 
     protected $fillable = [
-        'name',
-        'description',
-        'price',
-        'image_url',
+        'image_path',
+        'status',
     ];
 
     /*
@@ -42,6 +40,20 @@ class Product extends Model
     | RELATIONS
     |--------------------------------------------------------------------------
     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function scanResult()
+    {
+        return $this->hasOne(ScanResult::class);
+    }
+
+    public function userProducts()
+    {
+        return $this->hasMany(UserProduct::class);
+    }
 
     /*
     |--------------------------------------------------------------------------

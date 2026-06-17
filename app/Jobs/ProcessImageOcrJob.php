@@ -2,31 +2,35 @@
 
 namespace App\Jobs;
 
-use App\Models\OcrResult;
+use App\Models\ScanRequest;
 use App\Services\GoogleVisionService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class ProcessImageOcrJob implements ShouldQueue
 {
     use Dispatchable, Queueable, SerializesModels;
 
-    public function __construct(public int $ocrId) {}
+    public function __construct(public int $scanRequestId) {}
 
     public function handle()
     {
-        $ocr = OcrResult::find($this->ocrId);
-
-        if (!$ocr) return;
-
-        $ocr->update([
-            'status' => 'processing'
-        ]);
-
         try {
-            $imagePath = storage_path('app/public/' . $ocr->image_path);
+            $scanRequest = ScanRequest::find($this->scanRequestId);
+
+            if (!$scanRequest) return;
+
+            $scanRequest->update([
+                'status' => 'processing'
+            ]);
+
+            $imagePath = storage_path('app/public/' . $scanRequest->image_path);
+            if(!file_exists($imagePath)) {
+                throw new \Exception('Image file not found: ' . $imagePath);
+            }
 
             $base64Image = base64_encode(file_get_contents($imagePath));
 
@@ -34,17 +38,24 @@ class ProcessImageOcrJob implements ShouldQueue
 
             $result = $visionService->scanImage($base64Image);
 
-            $ocr->update([
-                'text' => $result,
-                'status' => 'success',
-                'ocr_date' => now(),
+            $scanRequest->scanResult()->create([
+                'raw_text' => $result,
+                'processed_at' => now(),
+            ]);
+
+            $scanRequest->update([
+                'status' => 'done',
             ]);
 
         } catch (\Exception $e) {
 
-            $ocr->update([
+            $scanRequest->update([
                 'status' => 'failed',
-                'text' => $e->getMessage(),
+            ]);
+
+            Log::error('Vision AI Job Failed', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
             ]);
 
             throw $e;

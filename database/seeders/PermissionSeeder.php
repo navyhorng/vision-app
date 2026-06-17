@@ -33,6 +33,8 @@ class PermissionSeeder extends Seeder
 
 
         $admin->givePermissionTo(Permission::all());
-        $user->givePermissionTo(['name', 'like', 'view %'])->get();
+        $user->givePermissionTo(
+            Permission::all()->filter(fn (Permission $permission) => str_starts_with($permission->name, 'read '))
+        );
     }
 }

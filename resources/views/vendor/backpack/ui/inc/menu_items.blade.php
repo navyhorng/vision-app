@@ -5,8 +5,9 @@
     </a>
 </li>
 
-<x-backpack::menu-item title="Products" icon="la la-box" :link="backpack_url('product')" />
-<x-backpack::menu-item title="OCR Results" icon="la la-file-text" :link="backpack_url('ocr-result')" />
+<x-backpack::menu-item title="Scan Requests" icon="la la-search" :link="backpack_url('scan-request')" />
+<x-backpack::menu-item title="Scan Results" icon="la la-clipboard-check" :link="backpack_url('scan-result')" />
+<x-backpack::menu-item title="User Products" icon="la la-box" :link="backpack_url('user-product')" />
 
 @if (backpack_user()->hasRole('admin'))
     <x-backpack::menu-dropdown title="Admin" icon="la la-user-shield">
@@ -15,3 +16,5 @@
         <x-backpack::menu-dropdown-item title="Permissions" icon="la la-user-lock" :link="backpack_url('permission')" />
     </x-backpack::menu-dropdown>
 @endif
+
+

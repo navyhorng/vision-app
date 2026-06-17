@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('products', function (Blueprint $table) {
+        Schema::create('scan_requests', function (Blueprint $table) {
             $table->id();
-            $table->string('barcode')->nullable();
-            $table->string('name')->nullable();
-            $table->string('brand')->nullable();
-            $table->text('ocr_text')->nullable();
-            $table->string('image')->nullable();
+
+            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
+            $table->string('image_path');
+            $table->string('status')->default('pending');
+            // pending | processing | done | failed
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('products');
+        Schema::dropIfExists('scan_requests');
     }
 };

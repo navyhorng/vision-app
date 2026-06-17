@@ -5,8 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Jobs\ProcessImageOcrJob;
 use App\Models\OcrResult;
-use Illuminate\Http\Request;
+use App\Models\ScanRequest;
 use App\Services\GoogleVisionService;
+use Illuminate\Http\Request;
 
 class ProductScanController extends Controller
 {
@@ -34,30 +35,37 @@ class ProductScanController extends Controller
         $path = $request->file('image')->store('ocr', 'public');
 
         // 2. create DB record
-        $ocr = OcrResult::create([
+        $scanRequest = ScanRequest::create([
             'image_path' => $path,
-            'status' => 'pending',
+            'status'     => 'pending',
         ]);
 
         // 3. dispatch job
-        ProcessImageOcrJob::dispatch($ocr->id);
+        ProcessImageOcrJob::dispatch($scanRequest->id);
 
         return response()->json([
-            'id' => $ocr->id,
-            'status' => 'pending',
+            'success' => true,
+            'data' => [
+                'scan_id' => $scanRequest->id,
+                'status'  => $scanRequest->status,
+                'image'   => asset('storage/' . $path),
+            ],
         ]);
     }
 
     public function result(int $id)
     {
-        $ocr = OcrResult::findOrFail($id);
+        $scanRequest = ScanRequest::findOrFail($id);
 
         return response()->json([
-            'id' => $ocr->id,
-            'status' => $ocr->status,
-            'text' => $ocr->text,
-            'image_path' => $ocr->image_path,
-            'ocr_date' => $ocr->ocr_date,
+            'success' => true,
+            'data' => [
+                'id' => $scanRequest->id,
+                'status' => $scanRequest->status,
+                'text' => $scanRequest->scanResult?->raw_text,
+                'image_path' => $scanRequest->image_path,
+                'ocr_date' => $scanRequest->scanResult?->processed_at,
+            ],
         ]);
     }
 }
