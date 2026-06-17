@@ -34,5 +34,8 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    'vision' => [
+        'key' => env('GOOGLE_VISION_API_KEY'),
+    ],
 
 ];
