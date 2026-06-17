@@ -28,7 +28,6 @@ class ProcessImageOcrJob implements ShouldQueue
         try {
             $imagePath = storage_path('app/public/' . $ocr->image_path);
 
-            // ✅ THIS IS THE CORRECT PART
             $base64Image = base64_encode(file_get_contents($imagePath));
 
             $visionService = new GoogleVisionService();

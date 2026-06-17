@@ -21,7 +21,7 @@ class OcrResultCrudController extends CrudController
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
-     * 
+     *
      * @return void
      */
     public function setup()
@@ -29,11 +29,13 @@ class OcrResultCrudController extends CrudController
         CRUD::setModel(\App\Models\OcrResult::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/ocr-result');
         CRUD::setEntityNameStrings('ocr result', 'ocr results');
+
+        $this->crud->denyAccess(['create', 'update', 'delete']);
     }
 
     /**
      * Define what happens when the List operation is loaded.
-     * 
+     *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
      * @return void
      */
@@ -49,7 +51,7 @@ class OcrResultCrudController extends CrudController
 
     /**
      * Define what happens when the Create operation is loaded.
-     * 
+     *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
      * @return void
      */
@@ -66,7 +68,7 @@ class OcrResultCrudController extends CrudController
 
     /**
      * Define what happens when the Update operation is loaded.
-     * 
+     *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
      * @return void
      */
