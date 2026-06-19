@@ -33,6 +33,11 @@ class ScanResult extends Model
         'processed_at',
     ];
 
+    protected $casts = [
+        'ai_data' => 'array',
+        'processed_at' => 'datetime',
+    ];
+
     /*
     |--------------------------------------------------------------------------
     | FUNCTIONS

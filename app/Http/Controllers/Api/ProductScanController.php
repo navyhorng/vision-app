@@ -39,7 +39,6 @@ class ProductScanController extends Controller
             'image_path' => $path,
             'status'     => 'pending',
         ]);
-
         // 3. dispatch job
         ProcessImageOcrJob::dispatch($scanRequest->id);
 

@@ -12,6 +12,7 @@ services:
       - .:/var/www
     depends_on:
       - mysql
+      - redis
     networks:
       - vision_network
 
@@ -41,6 +42,15 @@ services:
       MYSQL_PASSWORD: vision_password
     volumes:
       - mysql_data:/var/lib/mysql
+    networks:
+      - vision_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: vision_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
     networks:
       - vision_network
 

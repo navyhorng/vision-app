@@ -39,8 +39,8 @@ class ProcessImageOcrJob implements ShouldQueue
             $result = $visionService->scanImage($base64Image);
 
             $scanRequest->scanResult()->create([
-                'raw_text' => $result,
-                'processed_at' => now(),
+                'raw_text' => json_encode($result),
+                'processed_at' => now()->toDateTimeString(),
             ]);
 
             $scanRequest->update([
