@@ -8,12 +8,13 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Spatie\Permission\Traits\HasRoles;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
 
     use HasFactory, HasRoles;
-    use Notifiable;
+    use HasApiTokens, Notifiable;
     use CrudTrait;
 
     protected $fillable = [
@@ -34,6 +35,11 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
     public function scanRequests()
     {
