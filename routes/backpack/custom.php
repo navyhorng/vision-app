@@ -19,6 +19,9 @@ Route::group([
     Route::crud('scan-request', 'ScanRequestCrudController');
     Route::crud('scan-result', 'ScanResultCrudController');
     Route::crud('user-product', 'UserProductCrudController');
+    Route::get('/logs', function () {
+        return redirect()->to('/log-viewer');
+    })->name('admin.logs');
 }); // this should be the absolute last line of this file
 
 /**

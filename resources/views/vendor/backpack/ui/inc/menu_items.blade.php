@@ -14,6 +14,7 @@
         <x-backpack::menu-dropdown-item title="Users" icon="la la-users" :link="backpack_url('user')" />
         <x-backpack::menu-dropdown-item title="Roles" icon="la la-user-tag" :link="backpack_url('role')" />
         <x-backpack::menu-dropdown-item title="Permissions" icon="la la-user-lock" :link="backpack_url('permission')" />
+        <x-backpack::menu-dropdown-item title="Logs" icon="la la-file-alt" link="{{ route('admin.logs') }}" />
     </x-backpack::menu-dropdown>
 @endif
 
