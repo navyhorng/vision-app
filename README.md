@@ -1,58 +1,218 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Vision App
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Vision App is a Laravel-based product for authenticated image scanning and product enrichment. The application accepts uploaded images, sends them through Google Vision for OCR and image analysis, stores the scan lifecycle in the database, and exposes the results through an API and a Backpack admin area.
 
-## About Laravel
+The project is built for a modern Laravel stack with queued background processing, Redis-backed workers, Sanctum authentication, and a MySQL database.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## What It Does
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Accepts authenticated image uploads through the API.
+- Queues OCR and image-analysis work so scans do not block the request cycle.
+- Uses Google Vision to extract text, labels, and dominant colors from images.
+- Persists scan requests, scan results, and derived user products.
+- Provides an admin entry point at `/admin` through Backpack.
+- Exposes Laravel Sanctum-protected API endpoints for client applications.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Technology Stack
 
-## Learning Laravel
+- Laravel 13
+- PHP 8.3
+- MySQL 8
+- Redis for queue and cache support
+- Laravel Sanctum for API authentication
+- Laravel Horizon for queue monitoring
+- Backpack CRUD and Permission Manager for admin tooling
+- Google Vision API for image analysis
+- Vite and Tailwind CSS for frontend assets
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Repository Layout
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- `app/Http/Controllers` contains the API and admin-facing controllers.
+- `app/Jobs` contains queued background jobs such as image OCR processing.
+- `app/Models` contains the data models for scan requests, scan results, and user products.
+- `app/Services` contains external service integrations, including Google Vision.
+- `database/migrations` defines the schema for scans, products, jobs, and permissions.
+- `routes/api.php` defines the authenticated API surface.
+- `routes/web.php` redirects the landing page to the admin area.
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## Requirements
 
-## Agentic Development
+- PHP 8.3 or later
+- Composer
+- Node.js 20 or later
+- MySQL 8
+- Redis
+- A Google Vision API key
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Local Setup
+
+### Option 1: Docker
+
+The repository includes a `docker-compose.yml` with services for the application, Nginx, MySQL, and Redis.
+
+1. Start the stack:
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+docker compose up -d --build
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+2. Install PHP dependencies inside the app container or from your host if your environment is already configured.
 
-## Contributing
+3. Copy and configure the environment file:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-## Code of Conduct
+4. Run migrations and storage setup:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+php artisan migrate
+php artisan storage:link
+```
 
-## Security Vulnerabilities
+5. Install frontend dependencies and build assets:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+npm install
+npm run dev
+```
+
+### Option 2: Local PHP Environment
+
+1. Install dependencies:
+
+```bash
+composer install
+npm install
+```
+
+2. Prepare the environment:
+
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+3. Configure the database, Redis, and Google Vision credentials in `.env`.
+
+4. Run migrations:
+
+```bash
+php artisan migrate
+php artisan storage:link
+```
+
+5. Build and serve the frontend:
+
+```bash
+npm run dev
+```
+
+## Environment Variables
+
+The following values are required or commonly used by the application:
+
+```env
+APP_NAME="Vision App"
+APP_URL=http://localhost
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=vision_app
+DB_USERNAME=root
+DB_PASSWORD=
+
+REDIS_HOST=127.0.0.1
+REDIS_PORT=6379
+
+GOOGLE_VISION_API_KEY=your-google-vision-key
+```
+
+If you use Sanctum from a browser-based client, configure the usual session and stateful-domain settings for your local and production domains.
+
+## Running The Application
+
+### Web application
+
+- Open the application root in a browser.
+- The default route redirects to `/admin`.
+- Use the Backpack admin area to manage records and inspect application data.
+
+### API
+
+The API is mounted under `/api`.
+
+Public endpoints:
+
+- `POST /api/register`
+- `POST /api/login`
+- `GET /api/ping`
+
+Authenticated endpoints protected by `auth:sanctum`:
+
+- `POST /api/logout`
+- `POST /api/upload`
+- `POST /api/scan`
+- `GET /api/result/{id}`
+
+## Scan Workflow
+
+1. A client uploads an image through the API.
+2. The application creates a `scan_requests` record.
+3. A queued job processes the image through Google Vision.
+4. OCR and image-analysis data are stored in `scan_results`.
+5. The scan request status transitions through the processing lifecycle and is eventually marked `done` or `failed`.
+6. Derived product data can be saved to `user_products` for later use.
+
+## Background Processing
+
+This application relies on queue workers for image processing. In development, the Composer `dev` script starts the application server, queue listener, log viewer, and Vite in one command.
+
+```bash
+composer dev
+```
+
+If you prefer to run the pieces individually:
+
+```bash
+php artisan serve
+php artisan queue:listen --tries=1 --timeout=0
+php artisan pail --timeout=0
+npm run dev
+```
+
+Horizon is available for queue monitoring when configured in your environment.
+
+## Useful Commands
+
+```bash
+php artisan migrate
+php artisan migrate:fresh --seed
+php artisan test
+php artisan queue:work
+php artisan horizon
+php artisan storage:link
+```
+
+## Configuration Notes
+
+- Google Vision credentials are read from `GOOGLE_VISION_API_KEY`.
+- The application uses Redis for queued processing and cache-backed services.
+- Public uploads should be stored in `storage/app/public` and linked into `public/storage`.
+- If you change the database schema, update the relevant models and admin CRUD configuration together so the admin UI stays aligned with the data model.
+
+## Production Checklist
+
+- Set `APP_ENV=production` and `APP_DEBUG=false`.
+- Configure the database, Redis, and Google Vision secrets.
+- Run migrations before releasing.
+- Build frontend assets with `npm run build`.
+- Ensure a queue worker or Horizon process is running.
+- Verify the storage symlink is present.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is open-sourced software released under the MIT license.
