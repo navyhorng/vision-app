@@ -44,6 +44,17 @@ The project is built for a modern Laravel stack with queued background processin
 - Redis
 - A Google Vision API key
 
+## Getting A Google Vision API Key
+
+1. Sign in to the [Google Cloud Console](https://console.cloud.google.com/).
+2. Create a project, or select an existing project for this application.
+3. Enable the Vision API for that project.
+4. Create an API key or service account credential, depending on your deployment policy.
+5. Restrict the credential to the Vision API and the environments that need access.
+6. Add the credential to your `.env` file as `GOOGLE_VISION_API_KEY`.
+
+If your organization uses service accounts instead of API keys, keep the generated JSON credential secure and configure your runtime to load it through the approved secret-management process.
+
 ## Local Setup
 
 ### Option 1: Docker
@@ -149,7 +160,6 @@ Public endpoints:
 
 - `POST /api/register`
 - `POST /api/login`
-- `GET /api/ping`
 
 Authenticated endpoints protected by `auth:sanctum`:
 
