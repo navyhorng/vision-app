@@ -7,7 +7,15 @@ use App\Http\Controllers\Api\ProductScanController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-
+Route::get('/debug', function () {
+    return [
+        'app_url' => config('app.url'),
+        'url' => url('/'),
+        'asset' => asset('test.css'),
+        'secure' => request()->secure(),
+        'scheme' => request()->getScheme(),
+    ];
+});
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
