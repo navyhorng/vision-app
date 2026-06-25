@@ -19,8 +19,6 @@ if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) &&
 
 // Register the Composer autoloader...
 require __DIR__.'/../vendor/autoload.php';
-$app = require_once __DIR__.'/../bootstrap/app.php';
-$app->handleRequest(Request::capture());
 
 // Bootstrap Laravel and handle the request...
 /** @var Application $app */
